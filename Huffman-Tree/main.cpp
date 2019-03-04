@@ -1,11 +1,12 @@
 #include <iostream>
+#include <string>
 #include "Huffman.h"
 
 using namespace std;
 
 int main()
 {
-	int ch[] = { 'a','e','i','s','t','d','n' };
+	char ch[] = "aeistdn";
 	int w[] = { 10,15,12,3,4,13,1 };
 	hfTree T;
 	BuildHftree(T, 7, w, ch);
@@ -15,5 +16,6 @@ int main()
 	{
 		cout << result[i].data <<"	"<<result[i].code<< endl;
 	}
+	
 	return 0;
 }

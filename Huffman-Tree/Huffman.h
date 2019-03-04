@@ -9,12 +9,12 @@ using namespace std;
 
 #define OK 1
 #define ERROR 0
-#define OVERFLOW -1
+//#define OVERFLOW -1
 
 typedef int Status;
 
 //结点中数据类型
-#define ElemType int
+#define ElemType char
 
 //树中的结点
 struct TNode
@@ -42,7 +42,7 @@ struct hfTree
 };
 
 
-void BuildHftree(hfTree &T,int size,int w[],int v[])
+void BuildHftree(hfTree &T,int size,int w[],char v[])
 //T:	要构建的哈夫曼树
 //size:		编码个数
 //w:	权重数组
@@ -57,7 +57,7 @@ void BuildHftree(hfTree &T,int size,int w[],int v[])
 	T.rcd = (TNode*)malloc(T.length * sizeof(TNode));
 
 	//初始化
-	for (int i = 0; i < T.length; i++)
+	for (int i = size; i < T.length; i++)
 	{
 		T.rcd[i].weight = w[i - size];
 		T.rcd[i].data = v[i - size];
@@ -66,9 +66,9 @@ void BuildHftree(hfTree &T,int size,int w[],int v[])
 	}
 
 	//归并
-	for (int i = 0; i < T.length; i++)
+	for (int i = size - 1; i > 0; i--)
 	{
-		min1 = min2 = INT16_MAX;
+		min1 = min2 = 32767;
 		x = y = 0;
 		for (int j = i+1; j < T.length; j++)
 		{
@@ -87,11 +87,14 @@ void BuildHftree(hfTree &T,int size,int w[],int v[])
 					//y = x;
 					x = j;
 				}
-			T.rcd[i].weight = min1 + min2;
-			T.rcd[i].parent = T.rcd[i].right = T.rcd[i].left = 0;
-			T.rcd[x].parent = T.rcd[y].parent = i;
+			
 		}
-		
+
+		T.rcd[i].weight = min1 + min2;
+		T.rcd[i].parent = 0;
+		T.rcd[i].right = y;
+		T.rcd[i].left = x;
+		T.rcd[x].parent = T.rcd[y].parent = i;
 	}
 	//return 0;
 }
@@ -103,18 +106,20 @@ void GetCode(hfTree T,hfCode result[])
 	int size = T.length / 2;
 	int p, s;
 
-	for (int i = 0; i < T.length; i++)
+	for (int i = size; i < T.length; i++)
 	{
-		result[i - size].data = T.rcd[i - size].data;
-		result[i - size].code = '\0';
-		p = T.rcd[i - size].parent;
+		result[i - size].data = T.rcd[i].data;
+		result[i - size].code = "";
+		p = T.rcd[i].parent;
 		s = i;
+		string str00 = "0";
+		string str01 = "1";
 		while (p)
 		{
 			if (T.rcd[p].left == s)
-				result[i - size].code = '0' + result[i - size].code;
+				result[i - size].code = str00 + result[i - size].code;
 			else
-				result[i - size].code = '1' + result[i - size].code;
+				result[i - size].code = str01 + result[i - size].code;
 			s = p;
 			p = T.rcd[p].parent;
 		}
